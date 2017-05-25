@@ -1,44 +1,48 @@
 #include <iostream>
 #include <string>
-#include <map>
+#include <vector>
 using namespace std;
 
-char char_pair(char s)
+bool is_pair(char s1, char s2)
 {
-    if (s == '[') return ']';
-    if (s == '(') return ')';
-    return 'c';
+    return (s1 == '[' && s2 == ']') || (s1 == '(' && s2 == ')');
 }
 
 bool is_pair(string s)
 {
-    if (s.length() % 2 != 0) 
-        return false;
+    int l = s.length();
+    if (l % 2 != 0) return false;
+    if (l == 2) 
+        return is_pair(s[0], s[1]);
 
-    if (char_pair(s[0]) == s[s.length() - 1]) {
-        if (s.length() == 2) 
-            return true;
-
-        return is_pair(s.substr(1, s.length() - 2));
-    } else {
-        int pos = s.rfind(char_pair(s[0]), 1); // 有问题
-        if (pos == s.npos) {
+    std::vector<char> stack;
+    for (int i = 0 ;i < l; i ++) {
+        if (s[i] == '[' || s[i] == '(') {
+            stack.push_back(s[i]);
+        } else if (stack.empty()) {
             return false;
-        } else {
-            cout << s.substr(0, pos + 1) << endl;
-            cout << s.substr(pos) << endl;
-            return is_pair(s.substr(0, pos + 1)) && is_pair(s.substr(pos));
+        } else if (is_pair(stack.back(), s[i])) {
+            stack.pop_back();
         }
     }
-    return true;
+    if (stack.empty()) {
+        return true;
+    }
+    return false;
 }
+
 int main()
 {
-    // string a = "[[[]]]";
-    // cout << a.substr(1, 4);
-    // cin>>a;
-    cout<<is_pair("[[[]]]([()])");
-    // cout<<is_pair("[[[]]]");
-    // cout << char_pair('[');
-        return 0;
+    int n,i;
+    cin>>n;
+    string s;
+    for(i = 0; i < n; i++) {
+        cin >> s;
+        if (is_pair(s)) {
+            cout << "Yes" <<endl;
+        } else {
+            cout << "No" << endl;
+        }
+    }
+    return 0;
 }
